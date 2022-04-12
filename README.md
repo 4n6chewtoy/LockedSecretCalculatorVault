@@ -14,6 +14,6 @@ Script takes 3 arguments:
 
 The script is designed to identify any PIN or pattern lock data within the relevant files. It will then decrypt any user encrypted files and output them with a 'best guess' file extension.
 
-DataData for browser activity and 'notes' can be found in the encrypted database file: locked_vault.db 
+Data for browser activity and 'notes' can be found in the encrypted database file: locked_vault.db 
 
 Any questions, or issues let me know https://twitter.com/4n6chewtoy
