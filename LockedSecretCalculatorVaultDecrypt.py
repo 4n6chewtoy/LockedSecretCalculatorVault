@@ -51,42 +51,49 @@ def copyWithExt(dataToWrite, outputPath):
 ### Check for shared_preferences subfolder
 if('shared_prefs' in next(os.walk(cwd))[1]):
     ### If shared_preferences folder exisits, check for the file 'share_locked_vault.xml'
-    if(os.path.join(cwd, 'shared_prefs\share_locked_vault.xml')):
-        shared_prefs = (os.path.join(cwd, 'shared_prefs\share_locked_vault.xml'))
-        tree = ET.parse(shared_prefs)
-        root = tree.getroot()
-        print('------------------------------------------------------------------------------')
-        
-        #### PIN ####
-        ### If the file exisits, read the contents of <string name="57DFEA9AEC99CD87013E3862B9DE5B7D">  
-        try:
-            encryptedPIN = root.findall('./string[@name="57DFEA9AEC99CD87013E3862B9DE5B7D"]')[0].text
-            ### Print the encrypted PIN
-            print(f'The encrypted PIN is:\t\t{encryptedPIN}')
-            ###Decrypt the PIN
-            decryptedPIN = unpad(decryptData(bytes.fromhex(encryptedPIN)), AES.block_size)
-            print(f'The decrypted PIN is:\t\t{(decryptedPIN).decode("utf-8")}')
-        except IndexError:
-            print(f'\t\t**There is no PIN present**\t\t')
-        
-        #### PATTERN ####
-        ### If the file exisits, read the contents of <string name="85B064D26810275C89F1F2CC15E20B442E98874398F16F6717BBD5D34920E3F8"> 
-        try:
-            encryptedPattern = root.findall('./string[@name="85B064D26810275C89F1F2CC15E20B442E98874398F16F6717BBD5D34920E3F8"]')[0].text
-            ### Print the encrypted Pattern
-            print(f'The encrypted Pattern is:\t{encryptedPattern}')
-            ###Decrypt the Pattern
-            decryptedPattern = unpad(decryptData(bytes.fromhex(encryptedPattern)), AES.block_size)
-            print(f'The decrypted Pattern is:\t{(decryptedPattern).decode("utf-8")}')
-        except IndexError:
-            print(f'\t\t**There is no Pattern present**\t\t')
-        print('------------------------------------------------------------------------------\n')
+    if(os.path.exists(os.path.join(cwd, 'shared_prefs', 'share_locked_vault.xml'))):
+        shared_prefs = (os.path.join(cwd, 'shared_prefs', 'share_locked_vault.xml'))
+    ### Failing that, check for the file 'share_privacy_safe.xml'
+    elif(os.path.exists(os.path.join(cwd, 'shared_prefs', 'share_privacy_safe.xml'))):
+        shared_prefs = (os.path.join(cwd, 'shared_prefs', 'share_privacy_safe.xml'))
+    ### If we weren't able to find either, exit.
     else:
-      print('\n\shared_prefs\' file could not be found, exiting')
-      exit  
+      print('\npreferences xml file could not be found, exiting')
+      exit()
+
+    ### If we have found a preferences file, parse it.
+    tree = ET.parse(shared_prefs)
+    root = tree.getroot()
+    print('------------------------------------------------------------------------------')
+
+    #### PIN ####
+    ### If the file exisits, read the contents of <string name="57DFEA9AEC99CD87013E3862B9DE5B7D">
+    try:
+        encryptedPIN = root.findall('./string[@name="57DFEA9AEC99CD87013E3862B9DE5B7D"]')[0].text
+        ### Print the encrypted PIN
+        print(f'The encrypted PIN is:\t\t{encryptedPIN}')
+        ###Decrypt the PIN
+        decryptedPIN = unpad(decryptData(bytes.fromhex(encryptedPIN)), AES.block_size)
+        print(f'The decrypted PIN is:\t\t{(decryptedPIN).decode("utf-8")}')
+    except IndexError:
+        print(f'\t\t**There is no PIN present**\t\t')
+
+    #### PATTERN ####
+    ### If the file exisits, read the contents of <string name="85B064D26810275C89F1F2CC15E20B442E98874398F16F6717BBD5D34920E3F8">
+    try:
+        encryptedPattern = root.findall('./string[@name="85B064D26810275C89F1F2CC15E20B442E98874398F16F6717BBD5D34920E3F8"]')[0].text
+        ### Print the encrypted Pattern
+        print(f'The encrypted Pattern is:\t{encryptedPattern}')
+        ###Decrypt the Pattern
+        decryptedPattern = unpad(decryptData(bytes.fromhex(encryptedPattern)), AES.block_size)
+        print(f'The decrypted Pattern is:\t{(decryptedPattern).decode("utf-8")}')
+    except IndexError:
+        print(f'\t\t**There is no Pattern present**\t\t')
+    print('------------------------------------------------------------------------------\n')
+
 else:
-    print('\n\shared_prefs\' file could not be found, exiting')
-    exit
+    print('\nshared_prefs directory could not be found, exiting')
+    exit()
 
 #### DECRYPTING THE FILES ####
 ### Two areas to decrypt, that database and the media files. It will only target the one database but all the media
@@ -142,4 +149,4 @@ for dirpath, dirnames, filenames in os.walk(media_dir):
                             ### Close the working file
                             currentFile.close()
                             ### Status print
-                            print(f'File Decrypted Successfully') 
+                            print(f'File Decrypted Successfully')

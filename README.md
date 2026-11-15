@@ -8,8 +8,8 @@ Original Blog Post: https://theincidentalchewtoy.wordpress.com/2022/02/05/decryp
 
 Script takes 3 arguments:
 
-1. Data folder (/data/data/com.lkd.calculator)
-2. Encrypted media folder (/sdcard/.locked_vault/)
+1. Data folder (/data/data/com.lkd.calculator, /data/data/com.hld.anzenbokusucal)
+2. Encrypted media folder (/sdcard/.locked_vault/, /data/media/0/.privacy_safe)
 3. Output folder
 
 The script is designed to identify any PIN or pattern lock data within the relevant files. It will then decrypt any user encrypted files and output them with a 'best guess' file extension.
